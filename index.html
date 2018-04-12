@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script>
+		var studentScores = {
+		  student1: {
+		    id: 123456789,
+		    scores: {
+		      exams: [90, 95, 100, 80],
+		      exercises: [20, 15, 10, 19, 15],
+		    },
+		  },
+		  student2: {
+		    id: 123456799,
+		    scores: {
+		      exams: [50, 70, 90, 100],
+		      exercises: [0, 15, 20, 15, 15],
+		    },
+		  },
+		  student3: {
+		    id: 123457789,
+		    scores: {
+		      exams: [88, 87, 88, 89],
+		      exercises: [10, 20, 10, 19, 18],
+		    },
+		  },
+		  student4: {
+		    id: 112233445,
+		    scores: {
+		      exams: [100, 100, 100, 100],
+		      exercises: [10, 15, 10, 10, 15],
+		    },
+		  },
+		  student5: {
+		    id: 112233446,
+		    scores: {
+		      exams: [50, 80, 60, 90],
+		      exercises: [10, 0, 10, 10, 0],
+		    },
+		  },
+		};
+
+		var EXAMWEIGHT = .65;
+
+		var EXERCISEWEIGHT = .35;
+
+		function generateClassRecordSummary(scores) {
+			var studentGrades = Object.keys(scores).map(getStudentGrade);
+			var exams = groupExamsByIndex();
+			var examSummary = createExamSummary(exams);
+
+			function getStudentGrade(student) {
+				var exams = scores[student].scores.exams;
+				var exercises = scores[student].scores.exercises;
+				var grade = calculateGrade(exams, exercises);
+				return convertGrade(grade);
+			}
+
+			function groupExamsByIndex() {
+				var exams = Object.keys(scores).map(getExams);
+				var examGroup = [];
+				var i;
+				var length = exams[0].length;
+
+				for (i = 0; i < length; i++) {
+					var group = [];
+					exams.forEach(function(element) {
+						group.push(element[i]);
+					});
+					examGroup.push(group);				
+				}
+				return examGroup;
+			}
+
+			function addToGroup(score, index, array) {
+				array.push(score[index]);
+			}
+
+			function createExamSummary(exams) {
+				return exams.map(function(exam) {
+					return { average: calculateStudentAverageExam(exam), minimum: getMinScore(exam), maximum: getMaxScore(exam) }
+				});
+			}
+
+			function getExams(student) {
+				var exams = scores[student].scores.exams;
+				return exams;
+			}
+
+			console.log(examSummary);
+
+			return {
+				studentGrades: studentGrades,
+			}
+		}
+
+		function calculateGrade(exams, exercises) {
+			var examscore = calculateExamScore(exams);
+			var exercisescore = calculateExerciseScore(exercises);
+
+			return examscore + exercisescore;
+		}
+
+		function calculateExamScore(exams) {
+			return (calculateStudentAverageExam(exams) * EXAMWEIGHT);
+		}
+
+		function calculateStudentAverageExam(array) {
+			return array.reduce(add)/array.length;
+		}
+
+		function calculateExerciseScore(exercises) {
+			return exercises.reduce(add) * EXERCISEWEIGHT;
+		}
+
+		function add(grade1, grade2) {
+			return grade1 + grade2;
+		}
+
+		function getMaxScore(array) {
+			return array.reduce(maximumExamGrade);
+		}
+
+		function getMinScore(array) {
+			return array.reduce(minimumExamGrade);
+		}
+
+		function minimumExamGrade(result, value) {
+			return result <= value ? result : value;
+		}
+
+		function maximumExamGrade(result, value) {
+			return result >= value ? result : value;
+		}
+
+		function convertGrade(score) {
+			if (gradeIsA(score)) {
+				return "" + Math.round(score) + " (A)";
+			} else if (gradeIsB(score)) {
+				return "" + Math.round(score) + " (B)";
+			} else if (gradeIsC(score)) {
+				return "" + Math.round(score) + " (C)";
+			} else if(gradeIsD(score)) {
+				return "" + Math.round(score) + " (D)";
+			} else if(gradeIsE(score)) {
+				return "" + Math.round(score) + " (E)";
+			} else if(gradeIsF(score)) {
+				return "" + Math.round(score) + " (F)";
+			}
+		}
+
+		function gradeIsA(score) {
+			return Math.round(score) > 92 && Math.round(score) <= 100;
+		}
+
+		function gradeIsB(score) {
+			return Math.round(score) > 84 && Math.round(score) <= 92;
+		}
+
+		function gradeIsC(score) {
+			return Math.round(score) > 76 && Math.round(score) <= 84;
+		}
+
+		function gradeIsD(score) {
+			return Math.round(score) > 68 && Math.round(score) <= 76;
+		}
+
+		function gradeIsE(score) {
+			return Math.round(score) > 59 && Math.round(score) <= 68;
+		}
+
+		function gradeIsF(score) {
+			return Math.round(score) <= 59;
+		}
+
+		console.log(generateClassRecordSummary(studentScores));
+	</script>
+</head>
+<body>
+</body>
+</html>
+
+
+
+	
